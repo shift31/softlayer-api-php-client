@@ -4,19 +4,19 @@ h2. Overview
 
 The SoftLayer API PHP client classes provide a simple method for connecting to and making calls from the SoftLayer API and provides support for many of the SoftLayer API's features. Method calls and client management are handled by the PHP SOAP and XML-RPC extensions.
 
-Making API calls using the SoftLayer_SoapClient or SoftLayer_XmlrpcClient classes is done in the following steps:
+Making API calls using the SoftLayer_SoapClient or SLXmlrpcClient classes is done in the following steps:
 
-# Instantiate a new SoftLayer_SoapClient or SoftLayer_XmlrpcClient object using the SoftLayer_SoapClient::getClient() or SoftLayer_XmlrpcClient::getClient() methods. Provide the name of the service that you wish to query, an optional id number of the object that you wish to instantiate, your SoftLayer API username, your SoftLayer API key, and an optional API endpoint base URL. The client classes default to connect over the public Internet. Enter SoftLayer_SoapClient::API_PRIVATE_ENDPOINT or SoftLayer_XmlrpcClient::API_PRIVATE_ENDPOINT to connect to the API over SoftLayer's private network. The system making API calls must be connected to SoftLayer's private network (eg. purchased from SoftLayer or connected via VPN) in order to use the private network API endpoints.
+# Instantiate a new SLSoapClient or SLXmlrpcClient object using the SLSoapClient::getClient() or SLXmlrpcClient::getClient() methods. Provide the name of the service that you wish to query, an optional id number of the object that you wish to instantiate, your SoftLayer API username, your SoftLayer API key, and an optional API endpoint base URL. The client classes default to connect over the public Internet. Enter SLSoapClient::API_PRIVATE_ENDPOINT or SLXmlrpcClient::API_PRIVATE_ENDPOINT to connect to the API over SoftLayer's private network. The system making API calls must be connected to SoftLayer's private network (eg. purchased from SoftLayer or connected via VPN) in order to use the private network API endpoints.
 # Define and add optional headers to the client, such as object masks and result limits.
 # Call the API method you wish to call as if it were local to your client object. This class throws exceptions if it's unable to execute a query, so it's best to place API method calls in try / catch statements for proper error handling.
 
-Once your method is executed you may continue using the same client if you need to conenct to the same service or define another client object if you wish to work with multiple services at once.
+Once your method is executed you may continue using the same client if you need to connect to the same service or define another client object if you wish to work with multiple services at once.
 
 The most up to date version of this library can be found on the SoftLayer github public repositories: "http://github.com/softlayer/":http://github.com/softlayer/ . Please post to the SoftLayer forums <"http://forums.softlayer.com/":http://forums.softlayer.com/> or open a support ticket in the SoftLayer customer portal if you have any questions regarding use of this library.
 
 h2. System Requirements
 
-The SoftLayer_SoapClient class requires at least PHP 5.2.3 and the PHP SOAP enxtension installed. The SoftLayer_Xmlrpc class requires PHP at least PHP 5 and the PHP XML-RPC extension installed.
+The SLSoapClient class requires at least PHP 5.2.3 and the PHP SOAP extension installed. The SLXmlrpcClient class requires PHP at least PHP 5 and the PHP XML-RPC extension installed.
 
 A valid API username and key are required to call the SoftLayer API. A connection to the SoftLayer private network is required to connect to SoftLayer's private network API endpopints.
 
@@ -26,20 +26,36 @@ Download and copy the SoftLayer API client to a directory local to your PHP proj
 
 h2. Usage
 
-These examples use the SoftLayer_SoapClient class. If you wish to use the XML-RPC API then replace mentions of SoapClient.class.php with XmlrpcClient.class.php and SoftLayer_SoapClient with SoftLayer_XmlrpcClient.
+Add the following to your composer.json...since this is a fork, we're not using Packagist and you'll have to include this repo:
+
+<code>
+"repositories": [
+    {
+        "type": "git",
+        "url": "https://github.com/shift31/softlayer-api-php-client"
+    }
+],
+"require": {
+    "php": ">=5.3.0",
+    "shift31/softlayer-api-php-client": "dev-master"
+},
+</code>
+
+
+These examples use the SLSoapClient class. If you wish to use the XML-RPC API then replace mentions of SLSoapClient with SLXmlrpcClient.
 
 Here's a simple usage example that retrieves account information by calling the "getObject()":http://sldn.softlayer.com/reference/services/SoftLayer_Account/getObject method in the "SoftLayer_Account":http://sldn.softlayer.com/reference/services/SoftLayer_Account service:
 
 <pre><code>
 <?php
 
-require_once dirname(__FILE__) . '/SoftLayer/SoapClient.class.php';
+use SoftLayer\SLSoapClient;
 
 $apiUsername = 'set me';
 $apiKey = 'set me too';
 
 // Initialize an API client for the SoftLayer_Account service.
-$client = SoftLayer_SoapClient::getClient('SoftLayer_Account', null, $apiUsername, $apiKey);
+$client = SLSoapClient::getClient('SoftLayer_Account', null, $apiUsername, $apiKey);
 
 // Retrieve our account record
 try {
@@ -61,7 +77,7 @@ $apiUsername = 'set me';
 $apiKey = 'set me too';
 
 // Initialize an API client for ticket 123456
-$client = SoftLayer_SoapClient::getClient('SoftLayer_Ticket', 123456, $apiUsername, $apiKey);
+$client = SLSoapClient::getClient('SoftLayer_Ticket', 123456, $apiUsername, $apiKey);
 
 // Create an object mask and assign it to our API client.
 $objectMask = new SoftLayer_ObjectMask();
@@ -92,6 +108,8 @@ try {
 h2. Author
 
 This software is written by the SoftLayer Development Team <"sldn@softlayer.com":mailto:sldn@softlayer.com>.
+
+PHP 5.3 namespaces and composer support by Shift 31 Consulting <"code@shift31.com":mailto:code@shift31.com>.
 
 h2. Copyright
 
