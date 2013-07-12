@@ -73,7 +73,8 @@ For a more complex example we'll retrieve a support ticket with id 123456 along 
 <pre><code>
 <?php
 
-require_once dirname(__FILE__) . '/SoftLayer/SoapClient.class.php';
+use SoftLayer\SLSoapClient;
+use SoftLayer\Common\ObjectMask;
 
 $apiUsername = 'set me';
 $apiKey = 'set me too';
@@ -82,7 +83,7 @@ $apiKey = 'set me too';
 $client = SLSoapClient::getClient('SoftLayer_Ticket', 123456, $apiUsername, $apiKey);
 
 // Create an object mask and assign it to our API client.
-$objectMask = new SoftLayer_ObjectMask();
+$objectMask = new ObjectMask();
 $objectMask->updates;
 $objectMask->assignedUser;
 $objectMask->attachedHardware->datacenter;
