@@ -28,6 +28,7 @@ h2. Usage
 
 Add the following to your composer.json...since this is a fork, we're not using Packagist and you'll have to include this repo:
 
+<pre>
 <code>
 "repositories": [
     {
@@ -40,6 +41,7 @@ Add the following to your composer.json...since this is a fork, we're not using 
     "shift31/softlayer-api-php-client": "dev-master"
 },
 </code>
+</pre>
 
 
 These examples use the SLSoapClient class. If you wish to use the XML-RPC API then replace mentions of SLSoapClient with SLXmlrpcClient.
