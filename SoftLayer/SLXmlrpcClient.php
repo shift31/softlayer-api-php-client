@@ -1,4 +1,4 @@
-<?php
+<?php namespace SoftLayer;
 /**
  * Copyright (c) 2009 - 2010, SoftLayer Technologies, Inc. All rights reserved.
  *
@@ -27,14 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once dirname(__FILE__) . '/Common/ObjectMask.class.php';
+use SoftLayer\Common\ObjectMask;
 
 if (!extension_loaded('xmlrpc')) {
-    throw new Exception('Please load the PHP XML-RPC extension.');
+    throw new \Exception('Please load the PHP XML-RPC extension.');
 }
 
 if (version_compare(PHP_VERSION, '5', '<')) {
-    throw new Exception('The SoftLayer API XML-RPC client class requires at least PHP version 5.');
+    throw new \Exception('The SoftLayer API XML-RPC client class requires at least PHP version 5.');
 }
 
 /**
@@ -54,7 +54,7 @@ if (version_compare(PHP_VERSION, '5', '<')) {
  * @license     http://sldn.softlayer.com/article/License
  * @link        http://sldn.softlayer.com/article/The_SoftLayer_API The SoftLayer API
  */
-class Softlayer_XmlrpcClient
+class SLXmlrpcClient
 {
     /**
      * Your SoftLayer API username. You may overide this value when calling
@@ -92,7 +92,7 @@ class Softlayer_XmlrpcClient
      *
      * @var string
      */
-    const API_BASE_URL = SoftLayer_XmlrpcClient::API_PUBLIC_ENDPOINT;
+    const API_BASE_URL = self::API_PUBLIC_ENDPOINT;
 
     /**
      * The headers to send along with a SoftLayer API call
@@ -119,6 +119,9 @@ class Softlayer_XmlrpcClient
     /**
      * Execute a SoftLayer API method
      *
+     * @param $functionName
+     * @param null $arguments
+     * @throws \Exception
      * @return object
      */
     public function __call($functionName, $arguments = null)
@@ -143,16 +146,16 @@ class Softlayer_XmlrpcClient
             $file = file_get_contents($this->_endpointUrl . $this->_serviceName, false, $context);
 
             if ($file === false) {
-                throw new Exception('Unable to contact the SoftLayer API at ' . $this->_endpointUrl . $serviceName . '.');
+                throw new \Exception('Unable to contact the SoftLayer API at ' . $this->_endpointUrl . $this->_serviceName . '.');
             }
 
             $result = xmlrpc_decode($file);
-        } catch (Exception $e) {
-            throw new Exception('There was an error querying the SoftLayer API: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception('There was an error querying the SoftLayer API: ' . $e->getMessage());
         }
 
         if (is_array($result) && xmlrpc_is_fault($result)) {
-            throw new Exception('There was an error querying the SoftLayer API: ' . $result['faultString']);
+            throw new \Exception('There was an error querying the SoftLayer API: ' . $result['faultString']);
         }
 
         // remove the resultLimit header if they set it
@@ -171,10 +174,11 @@ class Softlayer_XmlrpcClient
      *
      * @param string $serviceName The name of the SoftLayer API service you wish to query
      * @param int $id An optional object id if you're instantiating a particular SoftLayer API object. Setting an id defines this client's initialization parameter header.
-     * @param string $username An optional API username if you wish to bypass SoftLayer_XmlrpcClient's built-in username.
      * @param string $username An optional API key if you wish to bypass SoftLayer_XmlrpcClient's built-in API key.
+     * @param null $apiKey
      * @param string $endpointUrl The API endpoint base URL you wish to connect to. Set this to SoftLayer_XmlrpcClient::API_PRIVATE_ENDPOINT to connect via SoftLayer's private network.
-     * @return SoftLayer_XmlrpcClient
+     * @throws \Exception
+     * @return SLXmlrpcClient
      */
     public static function getClient($serviceName, $id = null, $username = null, $apiKey = null, $endpointUrl = null)
     {
@@ -184,10 +188,10 @@ class Softlayer_XmlrpcClient
         $apiKey = trim($apiKey);
 
         if ($serviceName == null) {
-            throw new Exception('Please provide a SoftLayer API service name.');
+            throw new \Exception('Please provide a SoftLayer API service name.');
         }
 
-        $client = new Softlayer_XmlrpcClient();
+        $client = new self();
 
         /*
          * Default to use the public network API endpoint, otherwise use the
@@ -198,14 +202,14 @@ class Softlayer_XmlrpcClient
             $endpointUrl = trim($endpointUrl);
 
             if ($endpointUrl == null) {
-                throw new Exception('Please provide a valid API endpoint.');
+                throw new \Exception('Please provide a valid API endpoint.');
             }
 
             $client->_endpointUrl = $endpointUrl;
         } elseif (self::API_BASE_URL != null) {
             $client->_endpointUrl = self::API_BASE_URL;
         } else {
-            $client->_endpointUrl = SoftLayer_XmlrpcClient::API_PUBLIC_ENDPOINT;
+            $client->_endpointUrl = self::API_PUBLIC_ENDPOINT;
         }
 
         if ($username != null && $apiKey != null) {
@@ -234,7 +238,7 @@ class Softlayer_XmlrpcClient
      * @see removeHeader()
      * @param string $name The name of the header you wish to set
      * @param object $value The object you wish to set in this header
-     * @return SoftLayer_XmlrpcClient
+     * @return SLXmlrpcClient
      */
     public function addHeader($name, $value)
     {
@@ -253,7 +257,7 @@ class Softlayer_XmlrpcClient
      *
      * @see addHeader()
      * @param string $name The name of the header you wish to remove
-     * @return SoftLayer_XmlrpcClient
+     * @return SLXmlrpcClient
      */
     public function removeHeader($name)
     {
@@ -270,7 +274,8 @@ class Softlayer_XmlrpcClient
      * @link https://manage.softlayer.com/Administrative/apiKeychain API key management in the SoftLayer customer portal
      * @param string $username
      * @param string $apiKey
-     * @return SoftLayer_XmlrpcClient
+     * @throws \Exception
+     * @return SLxmlrpcClient
      */
     public function setAuthentication($username, $apiKey)
     {
@@ -278,14 +283,14 @@ class Softlayer_XmlrpcClient
         $apiKey = trim($apiKey);
 
         if ($username == null) {
-            throw new Exception('Please provide a SoftLayer API username.');
+            throw new \Exception('Please provide a SoftLayer API username.');
         }
 
         if ($apiKey == null) {
-            throw new Exception('Please provide a SoftLayer API key.');
+            throw new \Exception('Please provide a SoftLayer API key.');
         }
 
-        $header = new stdClass();
+        $header = new \stdClass();
         $header->username = $username;
         $header->apiKey   = $apiKey;
 
@@ -304,14 +309,14 @@ class Softlayer_XmlrpcClient
      *
      * @link http://sldn.softlayer.com/article/Using_Initialization_Parameters_in_the_SoftLayer_API Using Initialization Parameters in the SoftLayer API
      * @param int $id The ID number of the SoftLayer API object you wish to instantiate.
-     * @return SoftLayer_XmlrpcClient
+     * @return SLXmlrpcClient
      */
     public function setInitParameter($id)
     {
         $id = trim($id);
 
         if (!is_null($id)) {
-            $initParameters = new stdClass();
+            $initParameters = new \stdClass();
             $initParameters->id = $id;
             $this->addHeader($this->_serviceName . 'InitParameters', $initParameters);
         }
@@ -329,18 +334,18 @@ class Softlayer_XmlrpcClient
      * @see SoftLayer_ObjectMask
      * @link http://sldn.softlayer.com/article/Using-Object-Masks-SoftLayer-API Using object masks in the SoftLayer API
      * @param object $mask The object mask you wish to define
-     * @return SoftLayer_SoapClient
+     * @return SLSoapClient
      */
     public function setObjectMask($mask)
     {
         if (!is_null($mask)) {
              $header = 'SoftLayer_ObjectMask';
 
-            if ($mask instanceof SoftLayer_ObjectMask) {
+            if ($mask instanceof ObjectMask) {
                 $header = sprintf('%sObjectMask', $this->_serviceName);
             }
 
-            $objectMask = new stdClass();
+            $objectMask = new \stdClass();
             $objectMask->mask = $mask;
             $this->addHeader($header, $objectMask);
         }
@@ -358,11 +363,11 @@ class Softlayer_XmlrpcClient
      * @link http://sldn.softlayer.com/article/Using_Result_Limits_in_the_SoftLayer_API Using Result Limits in the SoftLayer API
      * @param int $limit The number of results to limit your SoftLayer API call to.
      * @param int $offset An optional offset to begin your SoftLayer API call's returned result set at.
-     * @return SoftLayer_XmlrpcClient
+     * @return SLXmlrpcClient
      */
     public function setResultLimit($limit, $offset = 0)
     {
-        $resultLimit = new stdClass();
+        $resultLimit = new \stdClass();
         $resultLimit->limit = intval($limit);
         $resultLimit->offset = intval($offset);
 

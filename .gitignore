@@ -3,3 +3,6 @@
 Thumbs.db
 .svn
 ._*
+composer.lock
+vendor
+.idea

@@ -1,4 +1,4 @@
-<?php
+<?php namespace SoftLayer\Common;
 /**
  * Copyright (c) 2009 - 2010, SoftLayer Technologies, Inc. All rights reserved.
  *
@@ -68,7 +68,7 @@
  * @see         SoftLayer_SoapClient::setObjectMask()
  * @see         SoftLayer_XmlrpcClient::setObjectMask()
  */
-class SoftLayer_ObjectMask
+class ObjectMask
 {
     /**
      * Define an object mask value
@@ -77,7 +77,7 @@ class SoftLayer_ObjectMask
      */
     public function __get($var)
     {
-        $this->{$var} = new SoftLayer_ObjectMask();
+        $this->{$var} = new self();
 
         return $this->{$var};
     }

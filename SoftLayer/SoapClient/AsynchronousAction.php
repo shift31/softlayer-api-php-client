@@ -1,4 +1,7 @@
-<?php
+<?php namespace SoftLayer\SoapClient;
+
+use SoftLayer\SLSoapClient;
+
 /**
  * Copyright (c) 2009 - 2010, SoftLayer Technologies, Inc. All rights reserved.
  *
@@ -111,12 +114,12 @@
  * @license     http://sldn.softlayer.com/article/License
  * @see         SoftLayer_SoapClient
  */
-class SoftLayer_SoapClient_AsynchronousAction
+class AsynchronousAction
 {
     /**
      * The SoftLayer SOAP client making an asynchronous call
      *
-     * @var SoftLayer_SoapClient
+     * @var SLSoapClient
      */
     protected $_soapClient;
 
@@ -142,11 +145,13 @@ class SoftLayer_SoapClient_AsynchronousAction
      * that socket. Throw exceptions if we're unable to make the socket
      * connection or send data to that socket.
      *
-     * @param SoftLayer_SoapClient $soapClient The SoftLayer SOAP client making the asynchronous call.
+     * @param SLSoapClient $soapClient The SoftLayer SOAP client making the asynchronous call.
      * @param string $functionName The name of the function we're calling.
      * @param string $request The full XML SOAP request we wish to make.
      * @param string $location The URL of the web service we wish to call.
      * @param string $action The value of the HTTP SOAPAction header in our SOAP call.
+     *
+     * @throws \Exception
      */
     public function __construct($soapClient, $functionName, $request, $location, $action)
     {
@@ -181,20 +186,20 @@ class SoftLayer_SoapClient_AsynchronousAction
 
         if ($this->_socket === false) {
             $this->_socket = null;
-            throw new Exception('Unable to make an asynchronous SoftLayer API call: ' . $errorNumber . ': ' . $errorMessage);
+            throw new \Exception('Unable to make an asynchronous SoftLayer API call: ' . $errorNumber . ': ' . $errorMessage);
         }
 
         if (fwrite($this->_socket, $data) === false) {
-            throw new Exception('Unable to write data to an asynchronous SoftLayer API call.');
+            throw new \Exception('Unable to write data to an asynchronous SoftLayer API call.');
         }
     }
 
     /**
-     * Process and return the results of an asyncrhonous SoftLayer API call
+     * Process and return the results of an asynchronous SoftLayer API call
      *
      * Read data from our socket and process the raw SOAP result from the
      * SoftLayer_SoapClient instance that made the asynchronous call. wait()
-     * *must* be called in order to recieve the results from your API call.
+     * *must* be called in order to receive the results from your API call.
      *
      * @return object
      */
