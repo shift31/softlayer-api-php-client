@@ -16,7 +16,7 @@ The most up to date version of this library can be found on the SoftLayer github
 
 h2. System Requirements
 
-The SLSoapClient class requires at least PHP 5.2.3 and the PHP SOAP extension installed. The SLXmlrpcClient class requires PHP at least PHP 5 and the PHP XML-RPC extension installed.
+The SLSoapClient class requires at least PHP 5.3 and the PHP SOAP extension installed. The SLXmlrpcClient class requires PHP at least PHP 5.3 and the PHP XML-RPC extension installed.
 
 A valid API username and key are required to call the SoftLayer API. A connection to the SoftLayer private network is required to connect to SoftLayer's private network API endpopints.
 
